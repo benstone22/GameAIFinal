@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//In memory of doug tillman
+//In memory of doug tillman 
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody rb;
@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         boxCollider = GetComponent<BoxCollider>();
-        speed = 25f;
+        speed = 25f; 
         jumpForce = 1000f;
         canJump = false;
     }
@@ -29,7 +29,8 @@ public class PlayerMovement : MonoBehaviour
         float inpZ = Input.GetAxis("Vertical")*speed;
         moveForce.z = inpZ;
         rb.AddForce(moveForce);
-        //canJump = Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down),1f);
+        
+
         
         //jumping
         if (Input.GetKeyDown(KeyCode.Space))

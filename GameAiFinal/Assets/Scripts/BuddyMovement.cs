@@ -8,7 +8,7 @@ public class BuddyMovement : MonoBehaviour
     Rigidbody rb;
     public Transform target;
     public bool shouldPuzzle;
-
+    public GameObject manager;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,6 +22,6 @@ public class BuddyMovement : MonoBehaviour
     }
     private void OnTriggerExit(Collider other)
     {
-        
+        gameObject.transform.position = other.transform.position;
     }
 }
