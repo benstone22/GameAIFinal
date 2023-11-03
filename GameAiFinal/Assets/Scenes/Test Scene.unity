@@ -338,8 +338,8 @@ GameObject:
   - component: {fileID: 716042387}
   - component: {fileID: 716042386}
   - component: {fileID: 716042385}
-  - component: {fileID: 716042389}
   - component: {fileID: 716042390}
+  - component: {fileID: 716042391}
   m_Layer: 0
   m_Name: Buddy
   m_TagString: Untagged
@@ -425,22 +425,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &716042389
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 716042384}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74a0421d1398ceb48abcab1fc6891e18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shouldFollow: 0
-  target: {fileID: 0}
-  shouldPuzzle: 0
-  manager: {fileID: 327686097}
 --- !u!195 &716042390
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -463,6 +447,18 @@ NavMeshAgent:
   m_BaseOffset: 0.50000006
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &716042391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 716042384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bc4cbe3e8dba0f448df39bff08b2a65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
