@@ -22,7 +22,7 @@ public class BuddyMovement : MonoBehaviour
     }
     private void OnTriggerExit(Collider other)
     {
-        gameObject.transform.position = other.transform.position;
+        //gameObject.transform.position = other.transform.position;
     }
 }
 
