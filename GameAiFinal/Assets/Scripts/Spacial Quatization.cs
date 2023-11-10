@@ -11,9 +11,9 @@ public class SpacialQuatization : MonoBehaviour
         return new Vector3Int(Mathf.FloorToInt(v.x / resolution), Mathf.FloorToInt(v.y /resolution), Mathf.FloorToInt(v.z / resolution));
     }
 
-    public Vector3 dequantize(Vector3Int index, float resolution = 1f)
+    public static Vector3 Dequantize(Vector3Int index, float resolution = 1f)
     {
-        return new Vector3((float)index.x * resolution + resolution / 2.0f, (float)index.y * resolution + resolution / 2.0f);
+        return new Vector3((float)index.x * resolution + resolution / 2.0f, (float)index.y * resolution + resolution / 2.0f, (float)index.z);
     }
 
     public void Move(GameObject go, Vector3 previous, Vector3 current)
