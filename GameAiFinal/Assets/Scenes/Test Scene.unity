@@ -339,7 +339,6 @@ GameObject:
   - component: {fileID: 716042386}
   - component: {fileID: 716042385}
   - component: {fileID: 716042390}
-  - component: {fileID: 716042392}
   - component: {fileID: 716042391}
   m_Layer: 0
   m_Name: Buddy
@@ -419,7 +418,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 716042384}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15.684256, y: 6.023115, z: 81.72164}
+  m_LocalPosition: {x: 12.1, y: 17.1, z: 76.6}
   m_LocalScale: {x: 18, y: 18, z: 18}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -460,24 +459,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d42a09c85c4d81941bf4ef6a461525e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
---- !u!114 &716042392
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 716042384}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18a8dd64d39f6ac4898e227ec3a16f85, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shouldFollow: 0
-  rb: {fileID: 0}
-  target: {fileID: 0}
-  shouldPuzzle: 0
-  manager: {fileID: 0}
+  player: {fileID: 2140820476}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
