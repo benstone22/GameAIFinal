@@ -7,7 +7,7 @@ using UnityEngine;
 public class AstarBehavior : SpacialQuatization
 {
     [SerializeField] public Vector3 targetPos = new Vector3(20.0f, 9.0f, 142.0f);
-
+    [SerializeField] public Vector3 defaultTarget = new Vector3(20.0f, 9.0f, 142.0f);
     public static int manhattanDist(Vector3 source, Vector3 target)
     {
         var qs = Quantize(source);
@@ -26,8 +26,25 @@ public class AstarBehavior : SpacialQuatization
     // Update is called once per frame
     void Update()
     {
+        Vector3 mousepos = Input.mousePosition;
+
         print(Quantize(this.transform.position));
+        if (Input.GetMouseButtonDown(0))
+        {
+            targetPos = mousepos;
+            Debug.Log(targetPos);
+            Debug.DrawLine(transform.position, mousepos);
+        }
+        if (Input.GetMouseButtonDown(1))
+        {
+            Debug.Log(targetPos);
+            targetPos = defaultTarget;
+
+        }
+
         Debug.Log(manhattanDist(this.transform.position, targetPos));
+
+
 
         // if (manhattanDist(this.transform.position, targetPos) != 0)
         // {

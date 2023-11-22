@@ -342,6 +342,7 @@ GameObject:
   - component: {fileID: 716042390}
   - component: {fileID: 716042392}
   - component: {fileID: 716042391}
+  - component: {fileID: 716042393}
   m_Layer: 0
   m_Name: Buddy
   m_TagString: Untagged
@@ -439,10 +440,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74a0421d1398ceb48abcab1fc6891e18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shouldFollow: 0
-  target: {fileID: 0}
-  shouldPuzzle: 0
-  manager: {fileID: 327686097}
 --- !u!195 &716042390
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -494,6 +491,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 2140820476}
+--- !u!114 &716042393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 716042384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9672894fd1f4ef3409d0394bba6e9483, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetPos: {x: 20, y: 9, z: 142}
+  defaultTarget: {x: 20, y: 9, z: 142}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
