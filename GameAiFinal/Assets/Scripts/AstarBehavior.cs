@@ -2,7 +2,28 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+
+struct AstarPriorityNode : IEquatable<AstarPriorityNode> , IComparable<AstarPriorityNode>
+{
+    public float Heuristic;
+    public float AccumulatedDist;
+    public Vector3Int index;
+
+    public bool Equals(AstarPriorityNode other)
+    {
+        return this.Heuristic == other.Heuristic && this.AccumulatedDist == other.AccumulatedDist && this.index == other.index;
+    }
+
+    int IComparable<AstarPriorityNode>.CompareTo(AstarPriorityNode other)
+    {
+        
+        return Mathf.RoundToInt((this.Heuristic + this.AccumulatedDist - other.Heuristic + other.AccumulatedDist)*10000000);
+    }
+}
+
+//Making own priority queue for frontier so we can astar.
 
 public class AstarBehavior : SpacialQuatization
 {
@@ -14,18 +35,25 @@ public class AstarBehavior : SpacialQuatization
         var qt = Quantize(target);
         return Mathf.Abs(qs.x - qt.x) + Mathf.Abs(qs.y - qt.y) + Mathf.Abs(qs.y - qt.y);
     }
-    
-    
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+   
 
     // Update is called once per frame
     void Update()
     {
+        PingPosition();
+    }
+
+    public void BuildPath(Vector3 StartPos, Vector3 GoalPos)
+    {
+        List<AstarPriorityNode> frontier = new List<AstarPriorityNode>();
+        frontier.Sort(); //you can sort it for priority.
+    }
+
+
+    public void PingPosition() //shifted to a seperate function (may need to adapt this to Raycasting because of 3D
+    {
+
+        
         Vector3 mousepos = Input.mousePosition;
 
         print(Quantize(this.transform.position));
@@ -43,17 +71,5 @@ public class AstarBehavior : SpacialQuatization
         }
 
         Debug.Log(manhattanDist(this.transform.position, targetPos));
-
-
-
-        // if (manhattanDist(this.transform.position, targetPos) != 0)
-        // {
-        //     
-        // }
-    }
-
-    public void BuildPath(Vector3 StartPos, Vector3 GoalPos)
-    {
-        
     }
 }
