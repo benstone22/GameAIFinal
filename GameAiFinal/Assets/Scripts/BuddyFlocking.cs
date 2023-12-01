@@ -9,17 +9,18 @@ public class BuddyFlocking : MonoBehaviour
 
     // Start is called before the first frame update
     Rigidbody rb;
-    Vector3 cohesionForce;
     public GameObject player;
-    Vector3 allignmentForce;
-    Vector3 separationForce;
+    private Vector3 cohesionForce;
+    private Vector3 allignmentForce;
+    private Vector3 separationForce;
+    
+    private 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         cohesionForce = Vector2.zero;
         allignmentForce = Vector2.zero;
         separationForce = Vector2.zero;
-        
     }
 
     // Update is called once per frame

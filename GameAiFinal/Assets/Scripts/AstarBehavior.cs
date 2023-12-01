@@ -18,10 +18,11 @@ struct AstarPriorityNode : IEquatable<AstarPriorityNode> , IComparable<AstarPrio
 
     int IComparable<AstarPriorityNode>.CompareTo(AstarPriorityNode other)
     {
-        
         return Mathf.RoundToInt((this.Heuristic + this.AccumulatedDist - other.Heuristic + other.AccumulatedDist)*10000000);
     }
 }
+
+
 
 //Making own priority queue for frontier so we can astar.
 
@@ -47,6 +48,7 @@ public class AstarBehavior : SpacialQuatization
     {
         List<AstarPriorityNode> frontier = new List<AstarPriorityNode>();
         frontier.Sort(); //you can sort it for priority.
+        //sorting is required after adding neighbors.
     }
 
 
@@ -67,7 +69,6 @@ public class AstarBehavior : SpacialQuatization
         {
             Debug.Log(targetPos);
             targetPos = defaultTarget;
-
         }
 
         Debug.Log(manhattanDist(this.transform.position, targetPos));
