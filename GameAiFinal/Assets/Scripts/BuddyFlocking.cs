@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -9,6 +10,8 @@ public class BuddyFlocking : MonoBehaviour
 {
 
     // Start is called before the first frame update
+    
+    
     Rigidbody rb;
     public GameObject player;
     private Vector3 cohesionForce = Vector2.zero;
@@ -16,7 +19,10 @@ public class BuddyFlocking : MonoBehaviour
     private Vector3 separationForce = Vector2.zero;
     private Vector3 flockingForce = Vector2.zero;
 
-    [FormerlySerializedAs("PlayerNeighborhood")] public List<GameObject> neighborhood;
+    [SerializeField] public float DESIREDMINDIST = 0.5f;
+    [SerializeField] private float BoundsLeft;
+
+    public List<GameObject> neighborhood;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -26,16 +32,23 @@ public class BuddyFlocking : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Collider col = player.GetComponent<SphereCollider>();
+        Collider col = player.GetComponent<SphereCollider>(); //good for a when dealing with single agent pairs bad if multiple buddies are around player
         CohesionCalc(col);
         AllignmentCalc(col);
         SeparationCalc(col);
 
         flockingForce = cohesionForce + separationForce + allignmentForce;
         
-        rb.AddForce(cohesionForce + separationForce + allignmentForce);
+        rb.AddForce(flockingForce);
     }
-    
+
+    private void FixedUpdate()
+    {
+        //transform.position.x = Mathf.Clamp(transform.position.x, boundsLeft, boundsRight);
+        //transform.position.y = Mathf.Clamp(transform.position.y, boundsDown, boundsUp);
+        //circumfrence
+    }
+
     private void CohesionCalc(Collider col)
     {
         Vector3 posSum = Vector3.zero;
@@ -49,14 +62,12 @@ public class BuddyFlocking : MonoBehaviour
             }
             PosCenter = posSum / (neighborhood.Count);
 
-            Vector3 distVect = PosCenter - this.transform.position;
+            Vector3 distVect = PosCenter - transform.position;
 
             cohesionForce = distVect.normalized;
         }
         // cohesionForce = col.transform.position - gameObject.transform.position;
         // cohesionForce = cohesionForce.normalized;
-        
-        
     }
     private void AllignmentCalc(Collider col)
     {
@@ -65,7 +76,36 @@ public class BuddyFlocking : MonoBehaviour
         allignmentForce = allignmentForce.normalized;
     }
     private void SeparationCalc(Collider col)
-    {
+    {   //fix calculation
+        int closeAgents = 0;
+        Vector3 pos = Vector2.zero;
+
+        if (neighborhood.Count != 0)
+        {
+            pos = transform.position;
+            for (int i = 0; i < neighborhood.Count; i++)
+            {
+                Vector3 neighborPos = neighborhood[i].transform.position;
+                Vector3 diffVect = transform.position - neighborPos;
+                float distance = diffVect.magnitude;
+
+                if (distance < DESIREDMINDIST)
+                {
+                    var hatVect = diffVect.normalized;
+                    separationForce += hatVect/distance;
+                    closeAgents++;
+                }
+            }
+
+            if (closeAgents != 0)
+            {
+                separationForce /= closeAgents;
+            }
+
+            separationForce = separationForce.normalized;
+        }
+
+
         Vector3 diff = transform.position - col.GetComponent<Transform>().transform.position;
         separationForce += (Vector3.one/diff.magnitude) / diff.magnitude;
         separationForce = separationForce.normalized;
