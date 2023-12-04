@@ -10,8 +10,7 @@ public class BuddyFlocking : MonoBehaviour
 {
 
     // Start is called before the first frame update
-
-    [SerializeField] private float distance = 5;
+    
     private Vector3 pos;
     Rigidbody rb;
     public GameObject player;
@@ -20,46 +19,51 @@ public class BuddyFlocking : MonoBehaviour
     private Vector3 separationForce = Vector2.zero;
     private Vector3 flockingForce = Vector2.zero;
 
-    [SerializeField] public float DESIREDMINDIST = 0.5f;
-    [SerializeField] private SphereCollider FlockRange;
+    [SerializeField] private float forceConstant = 1f;
+    [SerializeField] private Vector3 MinDistFromPlayer = new Vector3(2, 0,2 );
+    [SerializeField] private Vector3 MaxDistFromPlayer = new Vector3(8, 0, 2);
+    [SerializeField] public float DesiredMinDist = 0.5f;
+
+
     //[SerializeField] private float BoundsLeft;
 
     public List<GameObject> neighborhood;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        FlockRange = player.GetComponent<SphereCollider>();
         neighborhood.Add(player);
     }
 
     // Update is called once per frame
     void Update()
     {
-        Collider col = player.GetComponent<SphereCollider>(); //good for a when dealing with single agent pairs bad if multiple buddies are around player
+        Collider
+            col = player
+                .GetComponent<SphereCollider>(); //good for a when dealing with single agent pairs bad if multiple buddies are around player
         CohesionCalc(col);
         AllignmentCalc(col);
         SeparationCalc(col);
 
+        Vector3 distanceDiff = (player.transform.position - transform.position);
+
         flockingForce = cohesionForce + separationForce + allignmentForce;
         
-        rb.AddForce(flockingForce);
+        Vector3 forceToAdd = flockingForce.normalized * forceConstant;
+        
+        if (distanceDiff.magnitude >= MinDistFromPlayer.magnitude)
+        {
+            rb.AddForce(forceToAdd);
+        }
+        else if (distanceDiff.magnitude <= MinDistFromPlayer.magnitude)
+        {
+            rb.AddForce(-forceToAdd, ForceMode.VelocityChange);
+            Debug.Log(-forceToAdd);
+            Debug.Log(distanceDiff.magnitude);
+        }
     }
+    //TODO: lOOK AT Photo notes from class for making the flock force work better
 
-    private void FixedUpdate()
-    {
-        // pos.x = Mathf.Clamp(transform.position.x, (player.transform.position.x - 5f), (player.transform.position.x + 5f));
-        // pos.y = Mathf.Clamp(transform.position.y, (player.transform.position.y - 5f), (player.transform.position.y + 5f));
-        // pos.z = Mathf.Clamp(transform.position.z, (player.transform.position.z - 5f), (player.transform.position.z + 5f));
-        //
-        // transform.position = pos;
-        
-        //Dont deal with position deal with velocity.
-        
-        //TODO: lOOK AT Photo notes from class for making the flock force work better
-        
-    }
-
-    private void CohesionCalc(Collider col)
+        private void CohesionCalc(Collider col)
     {
         Vector3 posSum = Vector3.zero;
         Vector3 PosCenter = Vector3.zero;
@@ -99,29 +103,25 @@ public class BuddyFlocking : MonoBehaviour
                 Vector3 diffVect = transform.position - neighborPos;
                 float distance = diffVect.magnitude;
 
-                if (distance < DESIREDMINDIST)
+                if (distance < DesiredMinDist)
                 {
                     var hatVect = diffVect.normalized;
                     separationForce += hatVect/distance;
                     closeAgents++;
                 }
             }
-
             if (closeAgents != 0)
             {
                 separationForce /= closeAgents;
             }
-
             separationForce = separationForce.normalized;
         }
-
-
-        Vector3 diff = transform.position - col.GetComponent<Transform>().transform.position;
-        separationForce += (Vector3.one/diff.magnitude) / diff.magnitude;
-        separationForce = separationForce.normalized;
-        separationForce /= (diff.magnitude / col.bounds.size.magnitude);
-        
-        separationForce = separationForce.normalized;
+        // Vector3 diff = transform.position - col.GetComponent<Transform>().transform.position;
+        // separationForce += (Vector3.one/diff.magnitude) / diff.magnitude;
+        // separationForce = separationForce.normalized;
+        // separationForce /= (diff.magnitude / col.bounds.size.magnitude);
+        //
+        // separationForce = separationForce.normalized;
     }
 
 }

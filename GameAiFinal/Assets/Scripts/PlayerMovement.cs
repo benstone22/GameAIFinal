@@ -7,16 +7,15 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rb;
     private BoxCollider boxCollider;
     public Vector3 moveForce;
-    public float speed;
-    public float jumpForce;
+    public float speed = 5f;
+    public float jumpForce = 1000f;
     private bool canJump;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         boxCollider = GetComponent<BoxCollider>();
-        speed = 25f; 
-        jumpForce = 1000f;
+        //speed = 25f; 
         canJump = false;
     }
 
