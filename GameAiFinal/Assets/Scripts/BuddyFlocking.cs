@@ -13,6 +13,7 @@ public class BuddyFlocking : MonoBehaviour
     
     private Vector3 pos;
     Rigidbody rb;
+    private Rigidbody playerRB;
     public GameObject player;
     private Vector3 cohesionForce = Vector2.zero;
     private Vector3 allignmentForce = Vector2.zero;
@@ -31,6 +32,7 @@ public class BuddyFlocking : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        playerRB = player.GetComponent<Rigidbody>();
         neighborhood.Add(player);
     }
 
@@ -51,18 +53,25 @@ public class BuddyFlocking : MonoBehaviour
         Vector3 forceToAdd = flockingForce.normalized * forceConstant;
 
         forceToAdd.y = 0;  //Dont want y changes
-        
-        if (distanceDiff.magnitude >= MinDistFromPlayer.magnitude)
+
+
+
+        if (distanceDiff.magnitude >= MinDistFromPlayer.magnitude && playerRB.velocity != Vector3.zero) 
         {
             rb.AddForce(forceToAdd);
         }
-        else if (distanceDiff.magnitude <= MinDistFromPlayer.magnitude)
+        else if (distanceDiff.magnitude <= MinDistFromPlayer.magnitude && playerRB.velocity != Vector3.zero)
         {
             rb.AddForce(-forceToAdd);
             Debug.Log(-forceToAdd);
             Debug.Log(distanceDiff.magnitude);
         }
-        else if (distanceDiff.magnitude >= MaxDistFromPlayer.magnitude)
+        else if (distanceDiff.magnitude >= MaxDistFromPlayer.magnitude && playerRB.velocity != Vector3.zero)
+        {
+            rb.velocity = Vector3.zero;
+        }
+
+        if (playerRB.velocity == Vector3.zero)
         {
             rb.velocity = Vector3.zero;
         }
