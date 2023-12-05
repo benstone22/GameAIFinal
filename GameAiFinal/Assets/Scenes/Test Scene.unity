@@ -440,7 +440,7 @@ MonoBehaviour:
   player: {fileID: 2140820476}
   forceConstant: 1
   MinDistFromPlayer: {x: 2, y: 0, z: 2}
-  MaxDistFromPlayer: {x: 8, y: 0, z: 2}
+  MaxDistFromPlayer: {x: 6, y: 0, z: 2}
   DesiredMinDist: 0.5
   neighborhood: []
 --- !u!54 &716042392
@@ -457,7 +457,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 32
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!1 &963194225
 GameObject:
@@ -536,7 +536,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.25128773, y: -0, z: -0, w: 0.96791244}
-  m_LocalPosition: {x: -0.0000009536743, y: 8, z: -17}
+  m_LocalPosition: {x: 0, y: 15, z: -30}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -802,7 +802,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveForce: {x: 0, y: 0, z: 0}
-  speed: 5
+  speed: 3
   jumpForce: 10
 --- !u!135 &2140820483
 SphereCollider:

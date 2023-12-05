@@ -49,6 +49,8 @@ public class BuddyFlocking : MonoBehaviour
         flockingForce = cohesionForce + separationForce + allignmentForce;
         
         Vector3 forceToAdd = flockingForce.normalized * forceConstant;
+
+        forceToAdd.y = 0;  //Dont want y changes
         
         if (distanceDiff.magnitude >= MinDistFromPlayer.magnitude)
         {
@@ -56,9 +58,13 @@ public class BuddyFlocking : MonoBehaviour
         }
         else if (distanceDiff.magnitude <= MinDistFromPlayer.magnitude)
         {
-            rb.AddForce(-forceToAdd, ForceMode.VelocityChange);
+            rb.AddForce(-forceToAdd);
             Debug.Log(-forceToAdd);
             Debug.Log(distanceDiff.magnitude);
+        }
+        else if (distanceDiff.magnitude >= MaxDistFromPlayer.magnitude)
+        {
+            rb.velocity = Vector3.zero;
         }
     }
     //TODO: lOOK AT Photo notes from class for making the flock force work better
