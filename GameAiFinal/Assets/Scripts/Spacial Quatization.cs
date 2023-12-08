@@ -15,6 +15,7 @@ public class SpacialQuatization : MonoBehaviour
     {
         return new Vector3((float)index.x * resolution + resolution / 2.0f, (float)index.y * resolution + resolution / 2.0f, (float)index.z);
     }
+    
 
     public void Move(GameObject go, Vector3 previous, Vector3 current)
     {
