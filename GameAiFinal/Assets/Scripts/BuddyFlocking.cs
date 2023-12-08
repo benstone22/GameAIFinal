@@ -39,9 +39,7 @@ public class BuddyFlocking : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Collider
-            col = player
-                .GetComponent<SphereCollider>(); //good for a when dealing with single agent pairs bad if multiple buddies are around player
+        Collider col = player.GetComponent<SphereCollider>(); //good for a when dealing with single agent pairs bad if multiple buddies are around player
         CohesionCalc(col);
         AllignmentCalc(col);
         SeparationCalc(col);

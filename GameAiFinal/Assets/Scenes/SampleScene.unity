@@ -491,6 +491,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 2140820476}
+  forceConstant: 1
+  MinDistFromPlayer: {x: 2, y: 0, z: 2}
+  MaxDistFromPlayer: {x: 8, y: 0, z: 2}
+  DesiredMinDist: 0.5
+  neighborhood: []
 --- !u!114 &716042393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -749,8 +754,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveForce: {x: 0, y: 0, z: 0}
-  speed: 0
-  jumpForce: 0
+  speed: 10
+  jumpForce: 100
 --- !u!135 &2140820483
 SphereCollider:
   m_ObjectHideFlags: 0
