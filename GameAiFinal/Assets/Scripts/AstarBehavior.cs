@@ -96,9 +96,8 @@ public class AstarBehavior : SpacialQuatization
         Dictionary<Vector3Int, Vector3Int> cameFrom = new Dictionary<Vector3Int, Vector3Int>();
         List<Vector3Int> frontier = new List<Vector3Int>();
         Dictionary<Vector3Int, bool> visited = new Dictionary<Vector3Int, bool>();
-        Vector3Int start = new Vector3Int();
-        start = transform.position.ConvertTo<Vector3Int>();
-        
+       
+        Vector3Int start = Quantize(transform.position);
         
         frontier.Add(start);
         
