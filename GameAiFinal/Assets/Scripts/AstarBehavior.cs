@@ -247,8 +247,11 @@ public class AstarBehavior : SpacialQuatization
     public void Start()
     {
 
-        Vector3Int goal = new Vector3Int(0, 6, 0);
         
+        Vector3Int goal = new Vector3Int(0, 0, 0);
+            
+        Vector3Int quantpos = Quantize(transform.position);
+        goal.y = quantpos.y;
         
         findPath(goal);
     }
