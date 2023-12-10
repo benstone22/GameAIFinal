@@ -42,7 +42,9 @@
   </PropertyGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\AstarBehavior.cs" />
+     <Compile Include="Assets\Scripts\QuadTree.cs" />
      <Compile Include="Assets\Scripts\PlayerMovement.cs" />
+     <Compile Include="Assets\Scripts\PriorityQueue.cs" />
      <Compile Include="Assets\Scripts\Spacial Quatization.cs" />
      <Compile Include="Assets\Scripts\BuddyFlocking.cs" />
      <Folder Include="Assets" />

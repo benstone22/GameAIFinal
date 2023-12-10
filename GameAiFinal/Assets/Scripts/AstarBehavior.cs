@@ -6,7 +6,7 @@ using Unity.VisualScripting;
 
 using UnityEngine;
 
-struct AstarPriorityNode : IEquatable<AstarPriorityNode> , IComparable<AstarPriorityNode>
+struct AstarPriorityNode : IEquatable<AstarPriorityNode>, IComparable<AstarPriorityNode> 
 {
     public float Heuristic;
     public float AccumulatedDist;
@@ -29,12 +29,13 @@ struct AstarPriorityNode : IEquatable<AstarPriorityNode> , IComparable<AstarPrio
 
 
 
-//Making own priority queue for frontier so we can astar.
 
 public class AstarBehavior : SpacialQuatization
 {
     [SerializeField] public Vector3 targetPos = new Vector3(20.0f, 9.0f, 142.0f);
     [SerializeField] public Vector3 defaultTarget = new Vector3(20.0f, 9.0f, 142.0f);
+    //private Dictionary<Vector2Int, List<Vector3Int>> SpatialGrid = new Dictionary<Vector2Int, List<Vector3Int>>();
+    //private Quadtree<Vector3Int> qTree;
     public static int manhattanDist(Vector3 source, Vector3 target)
     {
         var qs = Quantize(source);
@@ -42,7 +43,7 @@ public class AstarBehavior : SpacialQuatization
         return Mathf.Abs(qs.x - qt.x) + Mathf.Abs(qs.y - qt.y) + Mathf.Abs(qs.y - qt.y);
     }
     
-    public List<Vector3Int> getVisitableNeighbors(Vector3Int cur,Dictionary<Vector3Int, bool> visited)
+    public List<Vector3Int> getVisitableNeighbors(Vector3Int cur,HashSet<Vector3Int> visited)
     {
         //forward backward left right
         List<Vector3Int> canidates = new List<Vector3Int>();
@@ -52,21 +53,22 @@ public class AstarBehavior : SpacialQuatization
         canidates.Add(forward);
         //backward
         Vector3Int backward = cur;
-        forward.z -= 1;
+        backward.z -= 1;
         canidates.Add(backward);
         //left
         Vector3Int left = cur;
-        forward.x -= 1;
+        left.x -= 1;
         canidates.Add(left);
         //right
         Vector3Int right = cur;
-        forward.x += 1;
+        right.x += 1;
         canidates.Add(right);
 
         List<Vector3Int> ret=new List<Vector3Int>();
-        for (int i = 0; i < visited.Count; i++)
+        for (int i = 0; i <canidates.Count; i++)
         {
-            if (!visited.ContainsKey(canidates[i]))
+            
+            if (!visited.Contains(canidates[i]))
             {
                 ret.Add(canidates[i]);
             }
@@ -75,59 +77,149 @@ public class AstarBehavior : SpacialQuatization
         return ret;
     }
 
-    // Update is called once per frame
-    void Update()
+    public Vector3Int findMin(HashSet<Vector3Int> frontier, Dictionary<Vector3Int, float> distKeeper)
     {
-        Vector3Int goal = new Vector3Int(0,0,0);
-        
-        makePath(goal);
-    }
-
-    public void BuildPath(Vector3 StartPos, Vector3 GoalPos)
-    {
-        List<AstarPriorityNode> frontier = new List<AstarPriorityNode>();
-        frontier.Sort(); //you can sort it for priority.
-        //sorting is required after adding neighbors.
-    }
-
-    public List<Vector3Int> makePath(Vector3Int goal)
-    {
-        Vector3Int backtrack = goal; //this is used for the buildpath
-        Dictionary<Vector3Int, Vector3Int> cameFrom = new Dictionary<Vector3Int, Vector3Int>();
-        List<Vector3Int> frontier = new List<Vector3Int>();
-        Dictionary<Vector3Int, bool> visited = new Dictionary<Vector3Int, bool>();
-       
-        Vector3Int start = Quantize(transform.position);
-        
-        frontier.Add(start);
-        
-        
-        while (!(frontier.Count==0))
+        Vector3Int minPos = new Vector3Int();
+        float minDist = float.MaxValue;
+        foreach (var pos in frontier)
         {
-            Vector3Int cur = frontier[0];
-            frontier.RemoveAt(0);
-            visited.Add(cur,true);
+            if (distKeeper.TryGetValue(pos,out float dist)&&dist<minDist)
+            {
+                minPos = pos;
+                minDist = dist;
+            }
+        }
+
+        return minPos;
+
+    }
+    
+
+    public List<Vector3Int> findPath(Vector3Int goal)
+    {
+
+        HashSet<Vector3Int> frontier = new HashSet<Vector3Int>();
+        HashSet<Vector3Int> visited = new HashSet<Vector3Int>();
+        Dictionary<Vector3Int, Vector3Int> cFrom = new Dictionary<Vector3Int, Vector3Int>();
+        Dictionary<Vector3Int, float> distKeeper = new Dictionary<Vector3Int, float>();
+        Dictionary<Vector3Int, float> heuKeeper = new Dictionary<Vector3Int, float>();
+
+       
+        Vector3Int start = new Vector3Int();
+        start = Quantize(transform.position);
+
+
+        frontier.Add(start);
+        distKeeper[start] = 0;
+        heuKeeper[start] = manhattanDist(Dequantize(start), Dequantize(goal));
+        
+        int loopbreak = 0;
+        
+        Vector3Int cur = start;
+        while (frontier.Count>0)
+        {
+            cur = findMin(frontier, distKeeper);
             if (cur.Equals(goal))
             {
-                break;
+                Debug.Log(cur+ " "+goal+" Done!");
+                return makePath(cFrom,cur);
             }
+            frontier.Remove(cur);
+            visited.Add(cur);
+           
             List<Vector3Int> neighbors = getVisitableNeighbors(cur, visited);
-            foreach (Vector3Int neighbor in neighbors)
+            //Debug.Log(neighbors.Count);
+            float tempAccDist = distKeeper[cur] + 1;
+            
+            for (int i = 0; i < neighbors.Count; i++)
             {
-                cameFrom[neighbor] = cur;
-                frontier.Add(neighbor);
-            }
+                
+                Vector3Int neighbor = neighbors[i];
+                if (visited.Contains(neighbor))
+                {
+                    continue;
+                }
+                if (!frontier.Contains(neighbor)||tempAccDist<distKeeper[neighbor])
+                {
+                    cFrom[neighbor] = cur;
+                    //Debug.Log(cFrom.Count);
+                    distKeeper[neighbor] = tempAccDist;
+                    heuKeeper[neighbor] = distKeeper[neighbor] + manhattanDist(Dequantize(neighbor), Dequantize(goal));
+                    //frontier.Add(neighbor);
+                    if (!frontier.Contains(neighbor))
+                    {
+                        frontier.Add(neighbor);
+                    }
 
+                }
+            }
+                
+                
+                
+            
+            
+            loopbreak++;
+            /*if (loopbreak>1000)
+            {
+                
+                Debug.Log("this is infinetly screwed");
+                break;
+                
+            }*/
+        }
+
+
+        return null;
+
+    }
+
+    static List<Vector3Int> makePath(Dictionary<Vector3Int, Vector3Int> cFrom, Vector3Int cur)
+    {
+        int loopbreak = 0;
+        List<Vector3Int> path = new List<Vector3Int>(){cur};
+        
+
+        while (cFrom.TryGetValue(cur,out Vector3Int prev))
+        {
+            cur = prev;
+            path.Insert(0,cur);
+            
+            
+            loopbreak++;
+            
+            if (loopbreak>1000)
+            {
+                Debug.Log("this is infinetly screwed");
+                break;
+                
+            }
+        }
+        void PrintPath(List<Vector3Int> path)
+        {
+            if (path != null)
+            {
+                Debug.Log("Path found:");
+                foreach (Vector3Int pos in path)
+                {
+                    Debug.Log($"({pos.x}, {pos.z})");
+                }
+            }
+            else
+            {
+                Debug.Log("No path found.");
+            }
+        }
+
+        for (int i = 0; i < path.Count-1; i++)
+        {
+            //Debug.Log(Dequantize(path[i]));
+            Debug.DrawLine(path[i], path[i + 1], Color.cyan, 10000f);
+            Debug.Log(path[i] + "path");
             
         }
-
-        List<Vector3Int> path = new List<Vector3Int>();
-        while (backtrack!= transform.position.ConvertTo<Vector3Int>())
-        {
-            path.Append(backtrack);
-            backtrack = cameFrom[backtrack];
-        }
-        return path;
+        //Debug.DrawLine(path[path.Count-1],Dequantize(goal),Color.cyan, 10f);
+        
+        return path; 
     }
 
 
@@ -151,5 +243,13 @@ public class AstarBehavior : SpacialQuatization
         }
 
         Debug.Log(manhattanDist(this.transform.position, targetPos));
+    }
+    public void Start()
+    {
+
+        Vector3Int goal = new Vector3Int(0, 6, 0);
+        
+        
+        findPath(goal);
     }
 }
