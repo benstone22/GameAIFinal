@@ -32,12 +32,26 @@ struct AstarPriorityNode : IEquatable<AstarPriorityNode>, IComparable<AstarPrior
 
 public class AstarBehavior : SpacialQuatization
 {
-    [SerializeField] public Vector3 targetPos = new Vector3(20.0f, 9.0f, 142.0f);
-    [SerializeField] public Vector3 defaultTarget = new Vector3(20.0f, 9.0f, 142.0f);
+    public TerrainCollider terrainCollider;
+    public Camera cam;
+    
+    [SerializeField] GameObject Player;
+    [SerializeField] public float directionTowardsNextPosForce = 0.1f;
+    [SerializeField] public Vector3 targetPos;
+
+    
+
+    
     //private Dictionary<Vector2Int, List<Vector3Int>> SpatialGrid = new Dictionary<Vector2Int, List<Vector3Int>>();
     //private Quadtree<Vector3Int> qTree;
+    public void Start()
+    {
+        
+        
+    }
     public static int manhattanDist(Vector3 source, Vector3 target)
     {
+        
         var qs = Quantize(source);
         var qt = Quantize(target);
         return Mathf.Abs(qs.x - qt.x) + Mathf.Abs(qs.y - qt.y) + Mathf.Abs(qs.y - qt.y);
@@ -128,7 +142,7 @@ public class AstarBehavior : SpacialQuatization
             visited.Add(cur);
            
             List<Vector3Int> neighbors = getVisitableNeighbors(cur, visited);
-            //Debug.Log(neighbors.Count);
+            
             float tempAccDist = distKeeper[cur] + 1;
             
             for (int i = 0; i < neighbors.Count; i++)
@@ -142,7 +156,7 @@ public class AstarBehavior : SpacialQuatization
                 if (!frontier.Contains(neighbor)||tempAccDist<distKeeper[neighbor])
                 {
                     cFrom[neighbor] = cur;
-                    //Debug.Log(cFrom.Count);
+                    
                     distKeeper[neighbor] = tempAccDist;
                     heuKeeper[neighbor] = distKeeper[neighbor] + manhattanDist(Dequantize(neighbor), Dequantize(goal));
                     //frontier.Add(neighbor);
@@ -194,65 +208,104 @@ public class AstarBehavior : SpacialQuatization
                 
             }
         }
-        void PrintPath(List<Vector3Int> path)
-        {
-            if (path != null)
-            {
-                Debug.Log("Path found:");
-                foreach (Vector3Int pos in path)
-                {
-                    Debug.Log($"({pos.x}, {pos.z})");
-                }
-            }
-            else
-            {
-                Debug.Log("No path found.");
-            }
-        }
+        
 
         for (int i = 0; i < path.Count-1; i++)
         {
-            //Debug.Log(Dequantize(path[i]));
+            
             Debug.DrawLine(path[i], path[i + 1], Color.cyan, 10000f);
-            Debug.Log(path[i] + "path");
+            Debug.Log("position in path index: " + i+ " is "+ path[i]);
             
         }
         //Debug.DrawLine(path[path.Count-1],Dequantize(goal),Color.cyan, 10f);
         
         return path; 
     }
+    void PrintPath(List<Vector3Int> path)
+    {
+        if (path != null)
+        {
+            Debug.Log("Path found:");
+            foreach (Vector3Int pos in path)
+            {
+                Debug.Log($"({pos.x}, {pos.z})");
+            }
+        }
+        else
+        {
+            Debug.Log("No path found.");
+        }
+    }
 
 
     public void PingPosition() //shifted to a seperate function (may need to adapt this to Raycasting because of 3D
     {
 
-        
+        RaycastHit hit;
         Vector3 mousepos = Input.mousePosition;
-
-        print(Quantize(this.transform.position));
-        if (Input.GetMouseButtonDown(0))
+        Ray mouseRay = cam.ScreenPointToRay(mousepos);
+        Vector3 mouseHit;
+        
+        if (terrainCollider.Raycast(mouseRay, out hit,70))
         {
-            targetPos = mousepos;
-            Debug.Log(targetPos);
-            Debug.DrawLine(transform.position, mousepos);
-        }
-        if (Input.GetMouseButtonDown(1))
-        {
-            Debug.Log(targetPos);
-            targetPos = defaultTarget;
+            
+            mouseHit = hit.point;
+            
+            Debug.Log("mouse pos: " + mouseHit);
+            print(Quantize(this.transform.position));
+            
+
+            mouseHit.y = transform.position.y;
+            targetPos = mouseHit;
+            Debug.Log("Target Position: " + targetPos);
+            Debug.DrawLine(transform.position, mouseHit,Color.red,100f);
+            
+
+            Debug.Log("Manhattan distance from current position at ping to target position: "+ manhattanDist(this.transform.position, targetPos));
+
         }
 
-        Debug.Log(manhattanDist(this.transform.position, targetPos));
+        
     }
-    public void Start()
+    
+    
+    public void Update()
     {
 
-        
-        Vector3Int goal = new Vector3Int(0, 0, 0);
-            
         Vector3Int quantpos = Quantize(transform.position);
-        goal.y = quantpos.y;
         
-        findPath(goal);
+        if (Input.GetMouseButtonDown(0))
+        {
+            Rigidbody rb = GetComponent<Rigidbody>();
+            
+            GetComponent<BuddyFlocking>().enabled = false;
+            
+            PingPosition(); 
+            Vector3Int quantTargetPos = Quantize(targetPos);
+            targetPos.y = quantpos.y;
+            
+            var path = findPath(quantTargetPos);
+            
+            if (path.Count>3)
+            {
+                var destination = path[2];
+                var direction = (destination - transform.position).normalized;
+                //rb.velocity+=directionTowardsNextPosForce*direction;
+                rb.AddForce(directionTowardsNextPosForce*direction);
+            }
+            
+        }
+
+        
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            GetComponent<BuddyFlocking>().enabled = true;
+            GetComponent<AstarBehavior>().enabled = false;
+
+        }
+        
+        
     }
+    
 }

@@ -10,7 +10,7 @@ public class BuddyFlocking : MonoBehaviour
 {
 
     // Start is called before the first frame update
-    
+    public AstarBehavior astar;
     private Vector3 pos;
     Rigidbody rb;
     private Rigidbody playerRB;
@@ -31,6 +31,7 @@ public class BuddyFlocking : MonoBehaviour
     public List<GameObject> neighborhood;
     void Start()
     {
+        astar = GetComponent<AstarBehavior>();
         rb = GetComponent<Rigidbody>();
         playerRB = player.GetComponent<Rigidbody>();
         neighborhood.Add(player);
@@ -39,6 +40,17 @@ public class BuddyFlocking : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetMouseButtonDown(0))
+        {
+            astar.enabled = true;
+            GetComponent<BuddyFlocking>().enabled = false;
+
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            astar.enabled = false;
+        }
         Collider col = player.GetComponent<SphereCollider>(); //good for a when dealing with single agent pairs bad if multiple buddies are around player
         CohesionCalc(col);
         AllignmentCalc(col);
