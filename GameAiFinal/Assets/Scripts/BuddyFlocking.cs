@@ -51,7 +51,7 @@ public class BuddyFlocking : MonoBehaviour
         {
             astar.enabled = false;
         }
-        Collider col = player.GetComponent<SphereCollider>(); //good for a when dealing with single agent pairs bad if multiple buddies are around player
+        Collider col = player.GetComponent<SphereCollider>(); //Fine because only 1 buddy
         CohesionCalc(col);
         AllignmentCalc(col);
         SeparationCalc(col);
@@ -73,8 +73,6 @@ public class BuddyFlocking : MonoBehaviour
         else if (distanceDiff.magnitude <= MinDistFromPlayer.magnitude && playerRB.velocity != Vector3.zero)
         {
             rb.AddForce(-forceToAdd);
-            Debug.Log(-forceToAdd);
-            Debug.Log(distanceDiff.magnitude);
         }
         else if (distanceDiff.magnitude >= MaxDistFromPlayer.magnitude && playerRB.velocity != Vector3.zero)
         {
@@ -86,9 +84,8 @@ public class BuddyFlocking : MonoBehaviour
             rb.velocity = Vector3.zero;
         }
     }
-    //TODO: lOOK AT Photo notes from class for making the flock force work better
 
-        private void CohesionCalc(Collider col)
+    private void CohesionCalc(Collider col)
     {
         Vector3 posSum = Vector3.zero;
         Vector3 PosCenter = Vector3.zero;
