@@ -37,17 +37,17 @@ public class AstarBehavior : SpacialQuatization
     
     [SerializeField] GameObject Player;
     [SerializeField] public float directionTowardsNextPosForce = 0.1f;
-    [SerializeField] public Vector3 targetPos;
+    [SerializeField] public Nullable<Vector3> targetPos;
 
     
-
+    
     
     //private Dictionary<Vector2Int, List<Vector3Int>> SpatialGrid = new Dictionary<Vector2Int, List<Vector3Int>>();
     //private Quadtree<Vector3Int> qTree;
     public void Start()
     {
-        
-        
+
+        targetPos = null;
     }
     public static int manhattanDist(Vector3 source, Vector3 target)
     {
@@ -109,7 +109,7 @@ public class AstarBehavior : SpacialQuatization
     }
     
 
-    public List<Vector3Int> findPath(Vector3Int goal)
+    public List<Vector3Int> findPath(Vector3Int goal)//the astar one
     {
 
         HashSet<Vector3Int> frontier = new HashSet<Vector3Int>();
@@ -198,8 +198,7 @@ public class AstarBehavior : SpacialQuatization
             cur = prev;
             path.Insert(0,cur);
             
-            
-            loopbreak++;
+            loopbreak++;//this is for alerting of infinite loops
             
             if (loopbreak>1000)
             {
@@ -210,13 +209,13 @@ public class AstarBehavior : SpacialQuatization
         }
         
 
-        for (int i = 0; i < path.Count-1; i++)
+        /*for (int i = 0; i < path.Count-1; i++)
         {
             
             Debug.DrawLine(path[i], path[i + 1], Color.cyan, 10000f);
             Debug.Log("position in path index: " + i+ " is "+ path[i]);
             
-        }
+        }*/
         //Debug.DrawLine(path[path.Count-1],Dequantize(goal),Color.cyan, 10f);
         
         return path; 
@@ -258,11 +257,7 @@ public class AstarBehavior : SpacialQuatization
             mouseHit.y = transform.position.y;
             targetPos = mouseHit;
             Debug.Log("Target Position: " + targetPos);
-            Debug.DrawLine(transform.position, mouseHit,Color.red,100f);
             
-
-            Debug.Log("Manhattan distance from current position at ping to target position: "+ manhattanDist(this.transform.position, targetPos));
-
         }
 
         
@@ -276,30 +271,38 @@ public class AstarBehavior : SpacialQuatization
         
         if (Input.GetMouseButtonDown(0))
         {
-            Rigidbody rb = GetComponent<Rigidbody>();
-            
             GetComponent<BuddyFlocking>().enabled = false;
+            PingPosition(); //this sets target
             
-            PingPosition(); 
-            Vector3Int quantTargetPos = Quantize(targetPos);
-            targetPos.y = quantpos.y;
+        }
+        Rigidbody rb = GetComponent<Rigidbody>();
+        
+        if (targetPos==null)
+        {
+            return;
+        }
+        Vector3Int quantTargetPos = Quantize((Vector3)targetPos);
+        var path = findPath(quantTargetPos);
+        
+        if (path.Count>3)
+        {
+            var destination = path[2];
+            var direction = (destination - transform.position).normalized;
+            rb.velocity+=directionTowardsNextPosForce*direction;
+            Debug.DrawLine(transform.position, quantTargetPos,Color.red,100f);//heuristic
             
-            var path = findPath(quantTargetPos);
-            
-            if (path.Count>3)
-            {
-                var destination = path[2];
-                var direction = (destination - transform.position).normalized;
-                //rb.velocity+=directionTowardsNextPosForce*direction;
-                rb.AddForce(directionTowardsNextPosForce*direction);
-            }
-            
+
+            Debug.Log("Manhattan distance from current position at ping to target position: "+ manhattanDist(this.transform.position, (Vector3)targetPos));
+
+            //rb.AddForce(directionTowardsNextPosForce*direction);
         }
 
         
 
         if (Input.GetMouseButtonDown(1))
         {
+            targetPos = null;
+            
             GetComponent<BuddyFlocking>().enabled = true;
             GetComponent<AstarBehavior>().enabled = false;
 
